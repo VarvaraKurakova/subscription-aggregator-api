@@ -11,6 +11,10 @@ import (
 
 	"github.com/VarvaraKurakova/subscription-aggregator-api/internal/config"
 	"github.com/VarvaraKurakova/subscription-aggregator-api/internal/db"
+	"github.com/VarvaraKurakova/subscription-aggregator-api/internal/handler"
+	"github.com/VarvaraKurakova/subscription-aggregator-api/internal/repository"
+	"github.com/VarvaraKurakova/subscription-aggregator-api/internal/service"
+	"github.com/VarvaraKurakova/subscription-aggregator-api/internal/transport"
 )
 
 func main() {
@@ -33,16 +37,15 @@ func main() {
 
 	logger.Info("connected to postgres")
 
-	mux := http.NewServeMux()
+	subscriptionRepo := repository.NewSubscriptionRepository(pgPool)
+	subscriptionService := service.NewSubscriptionService(subscriptionRepo)
+	subscriptionHandler := handler.NewSubscriptionHandler(subscriptionService)
 
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("ok"))
-	})
+	router := transport.NewRouter(subscriptionHandler, logger)
 
 	server := &http.Server{
 		Addr:         ":" + cfg.AppPort,
-		Handler:      mux,
+		Handler:      router,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,
