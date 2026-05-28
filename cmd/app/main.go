@@ -17,6 +17,11 @@ import (
 	"github.com/VarvaraKurakova/subscription-aggregator-api/internal/transport"
 )
 
+// @title Subscription Aggregator API
+// @version 1.0
+// @description REST API for managing user subscriptions and calculating total subscription cost for a selected period.
+// @host localhost:8080
+// @BasePath /
 func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 

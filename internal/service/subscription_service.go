@@ -68,8 +68,8 @@ type TotalSubscriptionsInput struct {
 
 type TotalSubscriptionsResult struct {
 	Total       int
-	PeriodFrom string
-	PeriodTo   string
+	PeriodFrom  string
+	PeriodTo    string
 	UserID      *string
 	ServiceName *string
 }
@@ -192,8 +192,8 @@ func (s *SubscriptionService) GetTotal(ctx context.Context, input TotalSubscript
 
 	return TotalSubscriptionsResult{
 		Total:       total,
-		PeriodFrom: domain.FormatMonthYear(from),
-		PeriodTo:   domain.FormatMonthYear(to),
+		PeriodFrom:  domain.FormatMonthYear(from),
+		PeriodTo:    domain.FormatMonthYear(to),
 		UserID:      input.UserID,
 		ServiceName: input.ServiceName,
 	}, nil

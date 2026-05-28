@@ -6,7 +6,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger"
 
+	_ "github.com/VarvaraKurakova/subscription-aggregator-api/docs"
 	"github.com/VarvaraKurakova/subscription-aggregator-api/internal/handler"
 )
 
@@ -20,6 +22,8 @@ func NewRouter(subscriptionHandler *handler.SubscriptionHandler, logger *slog.Lo
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("ok"))
 	})
+
+	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	r.Route("/subscriptions", func(r chi.Router) {
 		r.Post("/", subscriptionHandler.Create)

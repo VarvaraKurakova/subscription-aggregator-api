@@ -53,8 +53,8 @@ type SubscriptionResponse struct {
 type TotalResponse struct {
 	Total       int     `json:"total"`
 	Currency    string  `json:"currency"`
-	PeriodFrom string  `json:"period_from"`
-	PeriodTo   string  `json:"period_to"`
+	PeriodFrom  string  `json:"period_from"`
+	PeriodTo    string  `json:"period_to"`
 	UserID      *string `json:"user_id,omitempty"`
 	ServiceName *string `json:"service_name,omitempty"`
 }
@@ -63,6 +63,17 @@ type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
+// Create godoc
+// @Summary Create subscription
+// @Description Create a new user subscription
+// @Tags subscriptions
+// @Accept json
+// @Produce json
+// @Param request body CreateSubscriptionRequest true "Subscription data"
+// @Success 201 {object} SubscriptionResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /subscriptions/ [post]
 func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var req CreateSubscriptionRequest
 
@@ -86,6 +97,17 @@ func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, toSubscriptionResponse(sub))
 }
 
+// GetByID godoc
+// @Summary Get subscription by ID
+// @Description Get one subscription by numeric ID
+// @Tags subscriptions
+// @Produce json
+// @Param id path int true "Subscription ID"
+// @Success 200 {object} SubscriptionResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /subscriptions/{id} [get]
 func (h *SubscriptionHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	id, err := parseIDParam(r)
 	if err != nil {
@@ -102,6 +124,19 @@ func (h *SubscriptionHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, toSubscriptionResponse(sub))
 }
 
+// List godoc
+// @Summary List subscriptions
+// @Description Get subscriptions with optional filters and pagination
+// @Tags subscriptions
+// @Produce json
+// @Param user_id query string false "User UUID"
+// @Param service_name query string false "Subscription service name"
+// @Param limit query int false "Limit"
+// @Param offset query int false "Offset"
+// @Success 200 {array} SubscriptionResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /subscriptions/ [get]
 func (h *SubscriptionHandler) List(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
@@ -127,6 +162,19 @@ func (h *SubscriptionHandler) List(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, response)
 }
 
+// Update godoc
+// @Summary Update subscription
+// @Description Update an existing subscription by ID
+// @Tags subscriptions
+// @Accept json
+// @Produce json
+// @Param id path int true "Subscription ID"
+// @Param request body UpdateSubscriptionRequest true "Subscription data"
+// @Success 200 {object} SubscriptionResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /subscriptions/{id} [put]
 func (h *SubscriptionHandler) Update(w http.ResponseWriter, r *http.Request) {
 	id, err := parseIDParam(r)
 	if err != nil {
@@ -157,6 +205,16 @@ func (h *SubscriptionHandler) Update(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, toSubscriptionResponse(sub))
 }
 
+// Delete godoc
+// @Summary Delete subscription
+// @Description Delete subscription by ID
+// @Tags subscriptions
+// @Param id path int true "Subscription ID"
+// @Success 204
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /subscriptions/{id} [delete]
 func (h *SubscriptionHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id, err := parseIDParam(r)
 	if err != nil {
@@ -172,6 +230,19 @@ func (h *SubscriptionHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// GetTotal godoc
+// @Summary Calculate total subscription cost
+// @Description Calculate total subscription cost for selected period with optional filters by user_id and service_name
+// @Tags subscriptions
+// @Produce json
+// @Param from query string true "Period start in MM-YYYY format"
+// @Param to query string true "Period end in MM-YYYY format"
+// @Param user_id query string false "User UUID"
+// @Param service_name query string false "Subscription service name"
+// @Success 200 {object} TotalResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /subscriptions/total [get]
 func (h *SubscriptionHandler) GetTotal(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
@@ -197,8 +268,8 @@ func (h *SubscriptionHandler) GetTotal(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, TotalResponse{
 		Total:       result.Total,
 		Currency:    "RUB",
-		PeriodFrom: result.PeriodFrom,
-		PeriodTo:   result.PeriodTo,
+		PeriodFrom:  result.PeriodFrom,
+		PeriodTo:    result.PeriodTo,
 		UserID:      result.UserID,
 		ServiceName: result.ServiceName,
 	})
