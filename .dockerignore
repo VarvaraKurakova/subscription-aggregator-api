@@ -1,0 +1,12 @@
+.git
+.gitignore
+.env
+README.md
+
+tmp/
+bin/
+*.out
+
+.idea/
+.vscode/
+.DS_Store
